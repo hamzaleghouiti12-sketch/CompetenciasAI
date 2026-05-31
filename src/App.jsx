@@ -172,36 +172,58 @@ const CRITERIA_ECONOMIA=[
 ];
 
 const getCriteriaForSubj = (subj) => {
-  if (subj === "Economía") return CRITERIA_ECONOMIA;
-  if (subj === "Matemáticas") return [
+  let base = [];
+  if (subj === "Economía") base = CRITERIA_ECONOMIA;
+  else if (subj === "Matemáticas") base = [
     {id:1,code:"CE1.1",desc:"Resuelve problemas matemáticos complejos usando álgebra y geometría"},
     {id:2,code:"CE1.2",desc:"Comprende y aplica el cálculo diferencial en situaciones reales"},
     {id:3,code:"CE2.1",desc:"Analiza funciones y gráficas matemáticas"},
     {id:4,code:"CE2.2",desc:"Aplica la estadística y probabilidad a la toma de decisiones"},
     {id:5,code:"CE3.1",desc:"Utiliza el razonamiento lógico-matemático en contextos reales"}
   ];
-  if (subj === "Lengua") return [
+  else if (subj === "Lengua") base = [
     {id:1,code:"CE1.1",desc:"Analiza sintáctica y morfológicamente oraciones y textos"},
     {id:2,code:"CE1.2",desc:"Comprende e interpreta textos literarios de diferentes épocas"},
     {id:3,code:"CE2.1",desc:"Redacta textos argumentativos y expositivos con coherencia"},
     {id:4,code:"CE2.2",desc:"Identifica y utiliza figuras retóricas y recursos literarios"}
   ];
-  if (subj === "Filosofía") return [
+  else if (subj === "Filosofía") base = [
     {id:1,code:"CE1.1",desc:"Analiza críticamente textos filosóficos clásicos y contemporáneos"},
     {id:2,code:"CE1.2",desc:"Argumenta sobre problemas éticos y morales de la actualidad"},
     {id:3,code:"CE2.1",desc:"Comprende la evolución del pensamiento filosófico"}
   ];
-  if (subj === "Inglés") return [
+  else if (subj === "Inglés") base = [
     {id:1,code:"CE1.1",desc:"Comprende textos orales y escritos complejos en inglés"},
     {id:2,code:"CE1.2",desc:"Se expresa con fluidez y precisión en situaciones comunicativas"},
     {id:3,code:"CE2.1",desc:"Aplica conocimientos léxicos y gramaticales avanzados"}
   ];
-  return [
+  else base = [
     {id:1,code:"CE1.1",desc:`Comprende los fundamentos teóricos de ${subj}`},
     {id:2,code:"CE1.2",desc:`Aplica técnicas específicas de ${subj} en proyectos prácticos`},
     {id:3,code:"CE2.1",desc:`Analiza críticamente la información y fuentes de ${subj}`},
     {id:4,code:"CE2.2",desc:`Demuestra habilidades de resolución en el contexto de ${subj}`}
   ];
+
+  const isCore = ["Matemáticas","Lengua","Filosofía","Economía","Inglés","Historia","Biología"].includes(subj);
+  const target = isCore ? 18 : 10;
+  
+  if (base.length >= target) return base;
+  
+  const result = [...base];
+  let i = base.length + 1;
+  const verbs = ["Aplica","Desarrolla","Identifica","Comprende","Analiza","Evalúa","Argumenta","Contextualiza"];
+  while(result.length < target) {
+    const ceGroup = Math.floor((i-1)/3) + 1;
+    const ceSub = ((i-1)%3) + 1;
+    const verb = verbs[(i-1) % verbs.length];
+    result.push({
+      id: i,
+      code: `CE${ceGroup}.${ceSub}`,
+      desc: `${verb} competencias y destrezas correspondientes al bloque ${ceGroup} de ${subj} en situaciones reales.`
+    });
+    i++;
+  }
+  return result;
 };
 
 const SUBJECTS=[
